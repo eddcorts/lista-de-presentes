@@ -1,0 +1,282 @@
+@if (loading()) {
+    <div class="container order-skeleton" aria-hidden="true">
+        <div class="skeleton" style="height: 4rem"></div>
+        <div class="skeleton" style="height: 20rem"></div>
+    </div>
+} @else if (error(); as message) {
+    <div class="container container--narrow">
+        <div class="empty-state" role="alert">
+            <app-icon name="info" [size]="30" />
+            <h1>Pedido não encontrado</h1>
+            <p>{{ message }}</p>
+            <a class="btn btn--primary" routerLink="/">Voltar para a lista</a>
+        </div>
+    </div>
+} @else if (purchase(); as order) {
+    <div class="container container--narrow order-page">
+        <header class="head">
+            <div>
+                <p class="eyebrow">Pedido #{{ shortId() }}</p>
+                <h1>{{ order.buyerName.split(' ')[0] }}, seu pedido está aqui</h1>
+            </div>
+            <span class="badge" [class]="'badge badge--' + tone()">{{ label() }}</span>
+        </header>
+
+        @if (!isClosed()) {
+            <ol class="steps" aria-label="Etapas do pedido">
+                <li class="item is-done">
+                    <span class="dot"><app-icon name="check" [size]="12" /></span>
+                    <span class="step-name">Reservado</span>
+                </li>
+                <li
+                    class="item"
+                    [class.is-done]="isAwaiting() || isConfirmed()">
+                    <span class="dot">
+                        @if (isAwaiting() || isConfirmed()) {
+                            <app-icon name="check" [size]="12" />
+                        } @else {
+                            2
+                        }
+                    </span>
+                    <span class="step-name">Pagamento informado</span>
+                </li>
+                <li class="item" [class.is-done]="isConfirmed()">
+                    <span class="dot">
+                        @if (isConfirmed()) {
+                            <app-icon name="check" [size]="12" />
+                        } @else {
+                            3
+                        }
+                    </span>
+                    <span class="step-name">Confirmado</span>
+                </li>
+            </ol>
+        }
+
+        @if (isPending()) {
+            <div class="order-grid">
+                <section class="pix card" aria-labelledby="pix-title">
+                    <div class="head">
+                        <span class="icon"><app-icon name="qr" [size]="20" /></span>
+                        <div>
+                            <h2 id="pix-title">Pague com PIX</h2>
+                            <p>Escaneie o QR Code ou copie o código no app do seu banco.</p>
+                        </div>
+                    </div>
+
+                    @if (pix(); as pixData) {
+                        <img class="qr" [src]="pixData.qrDataUrl" alt="QR Code para pagamento PIX" />
+
+                        <div class="amount">{{ pixData.amountCents | brl }}</div>
+
+                        <label class="code-label" for="pix-code">Código copia e cola</label>
+                        <textarea id="pix-code" class="code" readonly rows="3">{{ pixData.payload }}</textarea>
+
+                        <button type="button" class="btn btn--primary btn--block" (click)="copyPix()">
+                            <app-icon [name]="copied() ? 'check' : 'copy'" [size]="16" />
+                            {{ copied() ? 'Código copiado' : 'Copiar código PIX' }}
+                        </button>
+
+                        <dl class="meta">
+                            <div>
+                                <dt>Identificador</dt>
+                                <dd>{{ pixData.txid }}</dd>
+                            </div>
+                            <div>
+                                <dt>Reserva válida até</dt>
+                                <dd>{{ expiresLabel() }}</dd>
+                            </div>
+                        </dl>
+
+                        <p class="note">
+                            <app-icon name="info" [size]="14" />
+                            A confirmação é manual: após o PIX, avise ao lado. Se o prazo passar, os itens voltam
+                            para a lista.
+                        </p>
+                    } @else {
+                        <div class="alert alert--warning">
+                            <app-icon name="info" [size]="16" />
+                            Não foi possível carregar o QR Code agora. Atualize a página.
+                        </div>
+                    }
+                </section>
+
+                <section class="confirm card" aria-labelledby="confirm-title">
+                    <div>
+                        <h2 id="confirm-title">Já fez o PIX?</h2>
+                        <p class="muted small">
+                            Avise {{ ownerName() }} para ela confirmar o recebimento. Você pode deixar um recado e
+                            anexar o comprovante.
+                        </p>
+                    </div>
+
+                    <div class="field">
+                        <label class="field__label" for="giftMessage">Recado (opcional)</label>
+                        <textarea
+                            id="giftMessage"
+                            class="textarea"
+                            maxlength="500"
+                            placeholder="Deixe uma mensagem carinhosa…"
+                            [value]="giftMessage()"
+                            (input)="onMessageInput($event)"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <span class="field__label">Comprovante (opcional)</span>
+                        <div class="upload">
+                            <label class="btn btn--ghost btn--sm">
+                                <app-icon name="upload" [size]="15" />
+                                {{ selectedFile() ? 'Trocar comprovante' : 'Anexar comprovante' }}
+                                <input
+                                    id="proof"
+                                    class="visually-hidden"
+                                    type="file"
+                                    accept="application/pdf,image/jpeg,image/png,image/webp,image/avif"
+                                    (change)="onFileChange($event)" />
+                            </label>
+                            @if (selectedFile(); as file) {
+                                <span class="file">
+                                    <app-icon name="check" [size]="14" />
+                                    {{ file.name }} · {{ fileSizeLabel(file) }}
+                                </span>
+                            }
+                        </div>
+                        <span class="field__hint">PDF ou imagem, até 8 MB.</span>
+                        @if (fileError()) {
+                            <span class="field__error">{{ fileError() }}</span>
+                        }
+                    </div>
+
+                    <label class="checkbox">
+                        <input
+                            type="checkbox"
+                            [checked]="acknowledged()"
+                            (change)="acknowledged.set($any($event.target).checked)" />
+                        <span>Já fiz o PIX de {{ order.totalCents | brl }}.</span>
+                    </label>
+
+                    <button
+                        type="button"
+                        class="btn btn--primary btn--lg btn--block"
+                        [disabled]="confirming()"
+                        (click)="confirmPayment()">
+                        @if (confirming()) {
+                            Enviando…
+                        } @else {
+                            <app-icon name="check" [size]="17" />
+                            Confirmar pagamento
+                        }
+                    </button>
+
+                    <button
+                        type="button"
+                        class="cancel"
+                        [disabled]="cancelling()"
+                        (click)="cancelOrder()">
+                        {{ cancelArmed() ? 'Clique de novo para cancelar o pedido' : 'Cancelar este pedido' }}
+                    </button>
+                </section>
+            </div>
+        } @else if (isAwaiting() || isConfirmed()) {
+            <section class="thanks">
+                <div class="icon" [class.is-confirmed]="isConfirmed()">
+                    <app-icon [name]="isConfirmed() ? 'check' : 'heart'" [size]="30" />
+                </div>
+                <p class="eyebrow">{{ isConfirmed() ? 'Pagamento confirmado' : 'Pagamento informado' }}</p>
+                <h2>
+                    {{ isConfirmed() ? 'Presente confirmado!' : 'Obrigada por avisar!' }}
+                </h2>
+                <p class="message">
+                    {{
+                        isConfirmed()
+                            ? thankYou()
+                            : 'Assim que o PIX for identificado, e aniversariante confirma o presente por aqui. Você pode voltar a esta página para acompanhar.'
+                    }}
+                </p>
+
+                <div class="actions">
+                    <button type="button" class="btn btn--ghost" [disabled]="refreshing()" (click)="load()">
+                        <app-icon name="refresh" [size]="15" />
+                        {{ refreshing() ? 'Atualizando…' : 'Atualizar status' }}
+                    </button>
+                    @if (pix()) {
+                        <button type="button" class="btn btn--soft" (click)="copyPix()">
+                            <app-icon name="copy" [size]="15" />
+                            Copiar PIX novamente
+                        </button>
+                    }
+                    <a class="btn btn--ghost" routerLink="/">
+                        <app-icon name="gift" [size]="15" />
+                        Voltar à lista
+                    </a>
+                </div>
+            </section>
+
+            @if (!isConfirmed()) {
+                <div class="order-cancel">
+                    <button type="button" class="cancel" [disabled]="cancelling()" (click)="cancelOrder()">
+                        {{ cancelArmed() ? 'Clique de novo para cancelar o pedido' : 'Preciso cancelar este pedido' }}
+                    </button>
+                </div>
+            }
+        } @else {
+            <section class="closed">
+                <div class="icon"><app-icon name="clock" [size]="28" /></div>
+                <h2>{{ isClosed() && status() === 'expired' ? 'Este pedido expirou' : 'Pedido cancelado' }}</h2>
+                <p>
+                    A reserva dos itens foi liberada e eles voltaram para a lista. Você pode escolher de novo
+                    quando quiser.
+                </p>
+                <a class="btn btn--primary" routerLink="/">Voltar para a lista</a>
+            </section>
+        }
+
+        <section class="summary card" aria-labelledby="summary-title">
+            <header class="head">
+                <h2 id="summary-title">Resumo do pedido</h2>
+                <span class="faint small">{{ createdLabel() }}</span>
+            </header>
+
+            <ul class="lines">
+                @for (line of order.lines; track $index) {
+                    <li>
+                        <div>
+                            <strong>{{ line.kind === 'donation' ? line.label : line.name }}</strong>
+                            <span>{{ lineDetail(line) }}</span>
+                        </div>
+                        <span class="line-total">{{ lineTotal(line) | brl }}</span>
+                    </li>
+                }
+            </ul>
+
+            <dl class="totals">
+                <div>
+                    <dt>Presentes</dt>
+                    <dd>{{ order.itemsTotalCents | brl }}</dd>
+                </div>
+                <div>
+                    <dt>Contribuição</dt>
+                    <dd>{{ order.donationCents | brl }}</dd>
+                </div>
+                <div class="grand">
+                    <dt>Total</dt>
+                    <dd>{{ order.totalCents | brl }}</dd>
+                </div>
+            </dl>
+
+            @if (order.giftMessage) {
+                <blockquote class="message">
+                    <app-icon name="heart" [size]="15" />
+                    <p>{{ order.giftMessage }}</p>
+                </blockquote>
+            }
+
+            @if (order.hasProof) {
+                <p class="proof">
+                    <app-icon name="check" [size]="14" />
+                    Comprovante enviado
+                </p>
+            }
+        </section>
+    </div>
+}

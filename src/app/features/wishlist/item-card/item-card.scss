@@ -1,0 +1,350 @@
+.item-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+    cursor: pointer;
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease;
+
+    &:hover {
+        transform: translateY(-3px);
+        border-color: var(--color-line-strong);
+        box-shadow: var(--shadow-md);
+    }
+
+    &.is-soldout {
+        background: var(--color-surface-muted);
+    }
+
+    .in-cart {
+        display: inline-flex;
+        flex: none;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: var(--radius-pill);
+        background: var(--color-success-soft);
+        color: var(--color-success);
+        font-size: 0.68rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .media {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        // overflow: hidden;
+        background: var(--color-bg-deep);
+
+        app-media-thumb {
+            height: 100%;
+        }
+
+        .in-cart {
+            display: none;
+        }
+
+        .tags {
+            position: absolute;
+            top: 0.7rem;
+            left: 0.7rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            max-width: calc(100% - 3.4rem);
+
+            .tag {
+                padding: 0.2rem 0.55rem;
+                border-radius: var(--radius-pill);
+                background: rgb(255 253 249 / 88%);
+                color: var(--color-ink);
+                font-size: 0.68rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                backdrop-filter: blur(4px);
+            }
+        }
+
+        .external {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.6rem;
+            display: grid;
+            place-items: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: rgb(255 253 249 / 90%);
+            color: var(--color-ink);
+            text-decoration: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background: rgb(36 31 25 / 38%);
+
+            span {
+                padding: 0.35rem 0.9rem;
+                border-radius: var(--radius-pill);
+                background: var(--color-surface);
+                color: var(--color-ink);
+                font-size: 0.75rem;
+                font-weight: 800;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                max-width: 100%;
+                overflow: hidden;
+            }
+        }
+    }
+
+
+    .body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1.1rem;
+    }
+
+    .heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.5rem;
+
+        h3 {
+            font-size: 1.12rem;
+            line-height: 1.25;
+        }
+
+    }
+
+    .description {
+        display: -webkit-box;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: var(--color-ink-soft);
+        font-size: 0.86rem;
+        line-height: 1.45;
+    }
+
+    .stock {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-top: auto;
+
+        .label {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            color: var(--color-ink-faint);
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+    }
+
+    .footer {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid var(--color-line);
+    }
+
+    .price {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+
+        strong {
+            font-size: 1.12rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        span {
+            color: var(--color-ink-faint);
+            font-size: 0.7rem;
+        }
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+}
+
+.stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    overflow: hidden;
+
+    .button {
+        display: grid;
+        place-items: center;
+        width: 1.95rem;
+        height: 1.95rem;
+        border: 0;
+        background: transparent;
+        color: var(--color-ink);
+
+        &:hover:not(:disabled) {
+            background: var(--color-bg-deep);
+        }
+
+        &:disabled {
+            color: var(--color-ink-faint);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .value {
+        min-width: 1.4rem;
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    &.compact .button {
+        width: 1.7rem;
+        height: 1.7rem;
+    }
+}
+
+/* Em telas pequenas a lista vira duas colunas com cartões compactos
+   (média de 4 cartões por 100vh); a descrição completa fica no diálogo. */
+@media (max-width: 680px) {
+    .item-card {
+        .media {
+            aspect-ratio: 3 / 2;
+
+            .tags .tag {
+                padding: 0.1rem 0.4rem;
+                font-size: 0.5rem;
+            }
+
+            .external {
+                width: 1.25rem;
+                height: 1.25rem;
+
+                app-icon {
+                    width: .75rem !important;
+                    height: .75rem !important;
+
+                    font-size: 1px;
+                }
+            }
+
+            .in-cart {
+                display: flex;
+
+                position: absolute;
+                bottom: 0;
+                right: 50%;
+                transform: translateX(50%) translateY(25%);
+            }
+        }
+
+        .body {
+            gap: 0.45rem;
+            padding: 0.45rem 0.7rem;
+
+            .heading {
+                gap: 0.4rem;
+
+                h3 {
+                    font-size: 0.9rem;
+                    line-height: 1.2;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .in-cart {
+                    display: none;
+                }
+            }
+        }
+
+
+        .description {
+            font-size: .6rem;
+        }
+
+        .stock {
+            gap: 0.2rem;
+
+            .label {
+                justify-content: flex-start;
+                font-size: 0.6rem;
+
+                span+span {
+                    display: none;
+                }
+            }
+        }
+
+        .footer {
+            flex-wrap: nowrap;
+            gap: 0.4rem;
+            padding-top: 0.35rem;
+
+            .price {
+                line-height: 1;
+
+                strong {
+                    font-size: 0.9rem;
+                }
+
+                span {
+                    display: none;
+                }
+            }
+
+            .btn {
+                padding: 0 .75rem;
+                font-size: .65rem;
+            }
+
+            .actions {
+                flex: none;
+                margin-left: auto;
+
+                .stepper {
+                    display: none;
+                }
+
+                .btn {
+                    padding-inline: 0.45rem;
+
+                    .label {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+}

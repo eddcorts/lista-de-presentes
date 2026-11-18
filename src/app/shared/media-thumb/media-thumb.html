@@ -1,0 +1,7 @@
+@if (url()) {
+    <img [src]="url()" [alt]="alt()" loading="lazy" decoding="async" />
+} @else {
+    <div class="placeholder" [style.background]="gradient()">
+        <span class="mark">{{ mark() }}</span>
+    </div>
+}

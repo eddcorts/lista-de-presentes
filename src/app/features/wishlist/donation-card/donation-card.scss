@@ -1,0 +1,128 @@
+.donation-card {
+    position: relative;
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background:
+        radial-gradient(circle at 100% 0%, rgb(201 154 63 / 45%), transparent 55%),
+        linear-gradient(155deg, #33483b, #22302a 70%);
+    color: #f7f1e5;
+    box-shadow: var(--shadow-md);
+
+    &::after {
+        content: '';
+        position: absolute;
+        right: -2.5rem;
+        bottom: -3rem;
+        width: 11rem;
+        height: 11rem;
+        border: 1px solid rgb(247 241 229 / 18%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    h3 {
+        color: #fffaf0;
+        font-size: 1.35rem;
+    }
+
+    .body {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        width: 100%;
+        padding: 1.3rem;
+    }
+
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        align-self: flex-start;
+        padding: 0.22rem 0.6rem;
+        border: 1px solid rgb(247 241 229 / 28%);
+        border-radius: var(--radius-pill);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #f2e3c9;
+    }
+
+    .description {
+        color: rgb(247 241 229 / 78%);
+        font-size: 0.87rem;
+        line-height: 1.45;
+    }
+
+    .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+
+        .amount {
+            padding: 0.38rem 0.8rem;
+            border: 1px solid rgb(247 241 229 / 30%);
+            border-radius: var(--radius-pill);
+            background: transparent;
+            color: #f7f1e5;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition:
+                background-color 140ms ease,
+                color 140ms ease;
+
+            &:hover {
+                background: rgb(247 241 229 / 12%);
+            }
+
+            &.is-active {
+                border-color: #f2e3c9;
+                background: #f2e3c9;
+                color: #22302a;
+            }
+        }
+    }
+
+    .custom {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        app-money-input {
+            flex: 1;
+            color: gray;
+        }
+    }
+
+    .hint {
+        color: rgb(247 241 229 / 60%);
+        font-size: 0.72rem;
+    }
+
+    .current {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-top: auto;
+        padding-top: 0.7rem;
+        border-top: 1px solid rgb(247 241 229 / 20%);
+        font-size: 0.82rem;
+    }
+
+    .remove {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #f2c7b5;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+}

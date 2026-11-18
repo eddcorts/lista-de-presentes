@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "esModuleInterop": true,
+        "types": ["node"],
+        "noEmit": true,
+        "skipLibCheck": true
+    },
+    "include": ["api/**/*.ts", "server/**/*.ts", "shared/**/*.ts"]
+}

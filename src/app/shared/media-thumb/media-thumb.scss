@@ -1,0 +1,28 @@
+:host {
+    display: block;
+    overflow: hidden;
+    background: var(--color-bg-deep);
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    color: rgb(255 255 255 / 82%);
+
+    .mark {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 5vw, 3rem);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-shadow: 0 2px 0.875rem rgb(40 30 20 / 25%);
+    }
+}

@@ -1,0 +1,268 @@
+<header class="page-head">
+    <div>
+        <p class="eyebrow">Ajustes</p>
+        <h1>Configurações</h1>
+        <p class="muted">Edite a apresentação da lista, os dados do PIX e a contribuição livre.</p>
+    </div>
+
+    <div class="actions">
+        <button type="button" class="btn btn--ghost btn--sm" (click)="load()">
+            <app-icon name="refresh" [size]="15" />
+            Recarregar
+        </button>
+        <button type="submit" form="settings-form" class="btn btn--primary btn--sm" [disabled]="saving()">
+            <app-icon name="check" [size]="15" />
+            {{ saving() ? 'Salvando…' : 'Salvar alterações' }}
+        </button>
+    </div>
+</header>
+
+<form id="settings-form" class="settings" [formGroup]="form" (ngSubmit)="submit()">
+    <section class="card card--pad section">
+        <header class="head">
+            <div>
+                <h2>Identidade da lista</h2>
+                <p class="faint small">Como os convidados veem a página inicial.</p>
+            </div>
+            <span class="icon"><app-icon name="sparkles" [size]="18" /></span>
+        </header>
+
+        <div class="form-grid">
+            <div class="field form-grid__full">
+                <label class="field__label" for="settings-title">Título</label>
+                <input id="settings-title" class="input" type="text" formControlName="title" maxlength="80" />
+                @if (form.controls.title.invalid && form.controls.title.touched) {
+                    <span class="field__error">Informe o título da lista.</span>
+                }
+            </div>
+
+            <div class="field form-grid__full">
+                <label class="field__label" for="settings-subtitle">Subtítulo (opcional)</label>
+                <input
+                    id="settings-subtitle"
+                    class="input"
+                    type="text"
+                    formControlName="subtitle"
+                    maxlength="120"
+                    placeholder="Uma frase curta sobre a festa"
+                />
+            </div>
+
+            <div class="field form-grid__full">
+                <label class="field__label" for="settings-description">Descrição (opcional)</label>
+                <textarea
+                    id="settings-description"
+                    class="textarea"
+                    formControlName="description"
+                    maxlength="1200"
+                    placeholder="Conte um pouco sobre a lista e como funciona."
+                ></textarea>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="settings-owner">Aniversariante</label>
+                <input id="settings-owner" class="input" type="text" formControlName="ownerName" maxlength="80" />
+                @if (form.controls.ownerName.invalid && form.controls.ownerName.touched) {
+                    <span class="field__error">Informe o nome.</span>
+                }
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="settings-date">Data do evento</label>
+                <input id="settings-date" class="input" type="date" formControlName="eventDate" />
+                @if (form.controls.eventDate.invalid && form.controls.eventDate.touched) {
+                    <span class="field__error">Informe a data.</span>
+                }
+            </div>
+
+            <div class="field form-grid__full">
+                <label class="field__label" for="settings-thanks">Mensagem de agradecimento (opcional)</label>
+                <textarea
+                    id="settings-thanks"
+                    class="textarea"
+                    formControlName="thankYouMessage"
+                    maxlength="600"
+                    placeholder="Aparece depois que você confirma um pagamento."
+                ></textarea>
+            </div>
+        </div>
+    </section>
+
+    <section class="card card--pad section">
+        <header class="head">
+            <div>
+                <h2>Imagens</h2>
+                <p class="faint small">Capa do site e foto do aniversariante.</p>
+            </div>
+            <span class="icon"><app-icon name="image" [size]="18" /></span>
+        </header>
+
+        <div class="image-grid">
+            <div class="image-card">
+                <div class="preview">
+                    <app-media-thumb [url]="coverImageUrl()" [label]="ownerName()" alt="Imagem de capa" />
+                </div>
+                <div class="actions">
+                    <strong>Capa da lista</strong>
+                    <div class="cluster">
+                        <label class="btn btn--ghost btn--sm">
+                            <app-icon name="upload" [size]="14" />
+                            {{ uploading() === 'cover' ? 'Enviando…' : 'Enviar' }}
+                            <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden (change)="upload('cover', $event)" />
+                        </label>
+                        @if (coverImageUrl()) {
+                            <button type="button" class="btn btn--danger btn--sm" (click)="removeImage('cover')">Remover</button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="image-card">
+                <div class="preview round">
+                    <app-media-thumb [url]="ownerImageUrl()" [label]="ownerName()" alt="Foto do aniversariante" />
+                </div>
+                <div class="actions">
+                    <strong>Foto de perfil</strong>
+                    <div class="cluster">
+                        <label class="btn btn--ghost btn--sm">
+                            <app-icon name="upload" [size]="14" />
+                            {{ uploading() === 'owner' ? 'Enviando…' : 'Enviar' }}
+                            <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden (change)="upload('owner', $event)" />
+                        </label>
+                        @if (ownerImageUrl()) {
+                            <button type="button" class="btn btn--danger btn--sm" (click)="removeImage('owner')">Remover</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card card--pad section">
+        <header class="head">
+            <div>
+                <h2>Recebimento via PIX</h2>
+                <p class="faint small">Os QR Codes são gerados com esses dados.</p>
+            </div>
+            <span class="icon"><app-icon name="qr" [size]="18" /></span>
+        </header>
+
+        <div class="form-grid">
+            <div class="field">
+                <label class="field__label" for="settings-pix-type">Tipo de chave</label>
+                <select id="settings-pix-type" class="select" formControlName="pixKeyType">
+                    @for (type of pixTypes; track type.value) {
+                        <option [value]="type.value">{{ type.label }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="settings-pix-key">Chave PIX</label>
+                <input id="settings-pix-key" class="input" type="text" formControlName="pixKey" [placeholder]="hintForType()" />
+                @if (form.controls.pixKey.invalid && form.controls.pixKey.touched) {
+                    <span class="field__error">Informe a chave PIX.</span>
+                }
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="settings-pix-name">Nome do recebedor</label>
+                <input id="settings-pix-name" class="input" type="text" formControlName="pixMerchantName" maxlength="25" />
+                <span class="field__hint">Máximo 25 caracteres, como aparece no banco.</span>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="settings-pix-city">Cidade do recebedor</label>
+                <input id="settings-pix-city" class="input" type="text" formControlName="pixMerchantCity" maxlength="15" />
+                <span class="field__hint">Sem acentos, máximo 15 caracteres.</span>
+            </div>
+        </div>
+
+        <div class="alert">
+            <app-icon name="info" [size]="16" />
+            <span>
+                O site não confirma pagamentos automaticamente. Cada PIX precisa ser conferido no extrato e
+                confirmado na aba Pedidos.
+            </span>
+        </div>
+    </section>
+
+    <section class="card card--pad section">
+        <header class="head">
+            <div>
+                <h2>Contribuição livre</h2>
+                <p class="faint small">O cartão virtual aparece junto com os presentes.</p>
+            </div>
+            <span class="icon"><app-icon name="heart" [size]="18" /></span>
+        </header>
+
+        <label class="checkbox donation-toggle">
+            <input
+                type="checkbox"
+                [checked]="donationEnabled()"
+                (change)="donationEnabled.set($any($event.target).checked)"
+            />
+            <span>Ativar contribuição livre na lista</span>
+        </label>
+
+        <div class="form-grid">
+            <div class="field form-grid__full">
+                <label class="field__label" for="settings-donation-title">Título do cartão</label>
+                <input id="settings-donation-title" class="input" type="text" formControlName="donationTitle" maxlength="60" />
+                @if (form.controls.donationTitle.invalid && form.controls.donationTitle.touched) {
+                    <span class="field__error">Informe um título.</span>
+                }
+            </div>
+
+            <div class="field form-grid__full">
+                <label class="field__label" for="settings-donation-description">Descrição (opcional)</label>
+                <textarea
+                    id="settings-donation-description"
+                    class="textarea"
+                    formControlName="donationDescription"
+                    maxlength="280"
+                ></textarea>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="settings-donation-min">Valor mínimo</label>
+                <app-money-input label="Valor mínimo" formControlName="donationMinCents" />
+                <span class="field__hint">Sugerimos R$ 5,00 como mínimo.</span>
+            </div>
+        </div>
+
+        <div class="field">
+            <span class="field__label">Valores sugeridos</span>
+            <div class="suggested" formArrayName="suggested">
+                @for (control of form.controls.suggested.controls; track $index) {
+                    <div class="row">
+                        <app-money-input label="Valor sugerido" [formControlName]="$index" />
+                        <button
+                            type="button"
+                            class="icon-btn danger"
+                            (click)="removeSuggested($index)"
+                            aria-label="Remover valor sugerido"
+                        >
+                            <app-icon name="trash" [size]="15" />
+                        </button>
+                    </div>
+                }
+            </div>
+            <div class="actions">
+                <button type="button" class="btn btn--ghost btn--sm" (click)="addSuggested()" [disabled]="form.controls.suggested.length >= 6">
+                    <app-icon name="plus" [size]="14" />
+                    Adicionar valor
+                </button>
+                <span class="field__hint">Prévia: {{ suggestionsPreview() }}</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="footer">
+        <p class="faint small">As alterações aparecem no site assim que você salvar.</p>
+        <button type="submit" class="btn btn--primary btn--lg" [disabled]="saving()">
+            <app-icon name="check" [size]="17" />
+            {{ saving() ? 'Salvando…' : 'Salvar alterações' }}
+        </button>
+    </div>
+</form>

@@ -1,0 +1,214 @@
+<header class="page-head">
+    <div>
+        <p class="eyebrow">Vendas</p>
+        <h1>Pedidos</h1>
+        <p class="muted">Confira o PIX no extrato antes de confirmar um presente.</p>
+    </div>
+
+    <div class="actions">
+        <button type="button" class="btn btn--ghost btn--sm" (click)="refresh()">
+            <app-icon name="refresh" [size]="15" />
+            Atualizar
+        </button>
+    </div>
+</header>
+
+<div class="toolbar card card--pad">
+    <div class="search">
+        <app-icon name="search" [size]="17" />
+        <input
+            type="search"
+            [value]="search()"
+            (input)="search.set($any($event.target).value)"
+            placeholder="Buscar por nome, e-mail ou código"
+            aria-label="Buscar pedido"
+        />
+    </div>
+
+    <div class="filters" role="group" aria-label="Filtrar pedidos">
+        @for (item of filters; track item.value) {
+            <button
+                type="button"
+                class="chip"
+                [class.chip--active]="filter() === item.value"
+                (click)="filter.set(item.value)"
+            >
+                {{ item.label }}
+                <span class="count">{{ counts()[item.value] }}</span>
+            </button>
+        }
+    </div>
+</div>
+
+@if (filtered().length === 0) {
+    <div class="empty-state">
+        <app-icon name="users" [size]="28" />
+        <h2>Nenhum pedido encontrado</h2>
+        <p>Assim que alguém escolher um presente, o pedido aparece aqui.</p>
+    </div>
+} @else {
+    <ul class="orders">
+        @for (purchase of filtered(); track purchase.id) {
+            <li class="order-card card" [class.is-open]="expanded() === purchase.id">
+                <button type="button" class="summary" (click)="toggle(purchase)" [attr.aria-expanded]="expanded() === purchase.id">
+                    <span class="avatar">{{ initials(purchase.buyerName) }}</span>
+
+                    <span class="who">
+                        <strong>{{ purchase.buyerName }}</strong>
+                        <span>{{ purchase.buyerEmail }}</span>
+                    </span>
+
+                    <span class="meta">
+                        <span>{{ plural(purchase.lines.length, 'item', 'itens') }}</span>
+                        <span>{{ formatDateTime(purchase.createdAt) }}</span>
+                    </span>
+
+                    <span [class]="'badge badge--' + statusTone(purchase.status)">
+                        {{ statusLabel(purchase.status) }}
+                    </span>
+
+                    <strong class="total">{{ purchase.totalCents | brl }}</strong>
+
+                    <span class="chevron" [class.is-open]="expanded() === purchase.id">
+                        <app-icon name="arrow-right" [size]="16" />
+                    </span>
+                </button>
+
+                @if (expanded() === purchase.id) {
+                    <div class="body">
+                        <div class="lines">
+                            <h3>Itens</h3>
+                            <ul>
+                                @for (line of purchase.lines; track $index) {
+                                    <li>
+                                        <span>
+                                            <strong>{{ line.kind === 'donation' ? line.label : line.name }}</strong>
+                                            <small>
+                                                @if (line.kind === 'donation') {
+                                                    Contribuição
+                                                } @else {
+                                                    {{ line.quantity }} × {{ line.unitPriceCents | brl }}
+                                                }
+                                            </small>
+                                        </span>
+                                        <span>{{ lineTotal(line) | brl }}</span>
+                                    </li>
+                                }
+                            </ul>
+
+                            <dl class="totals">
+                                <div>
+                                    <dt>Presentes</dt>
+                                    <dd>{{ purchase.itemsTotalCents | brl }}</dd>
+                                </div>
+                                <div>
+                                    <dt>Contribuição</dt>
+                                    <dd>{{ purchase.donationCents | brl }}</dd>
+                                </div>
+                                <div>
+                                    <dt>Total</dt>
+                                    <dd>{{ purchase.totalCents | brl }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <div class="details">
+                            <h3>Detalhes</h3>
+
+                            <dl class="detail-list">
+                                <div>
+                                    <dt>Reservado em</dt>
+                                    <dd>{{ formatDateTime(purchase.createdAt) }}</dd>
+                                </div>
+                                <div>
+                                    <dt>Expira em</dt>
+                                    <dd>{{ formatDateTime(purchase.expiresAt) }}</dd>
+                                </div>
+                                @if (purchase.claimedAt) {
+                                    <div>
+                                        <dt>Pagamento informado</dt>
+                                        <dd>{{ formatDateTime(purchase.claimedAt) }}</dd>
+                                    </div>
+                                }
+                                @if (purchase.confirmedAt) {
+                                    <div>
+                                        <dt>Confirmado em</dt>
+                                        <dd>{{ formatDateTime(purchase.confirmedAt) }}</dd>
+                                    </div>
+                                }
+                                <div>
+                                    <dt>Identificador PIX</dt>
+                                    <dd class="mono">{{ purchase.pixTxid }}</dd>
+                                </div>
+                            </dl>
+
+                            @if (purchase.giftMessage) {
+                                <blockquote class="message">
+                                    <app-icon name="heart" [size]="15" />
+                                    <p>{{ purchase.giftMessage }}</p>
+                                </blockquote>
+                            }
+
+                            @if (purchase.proofPathname) {
+                                <a class="btn btn--ghost btn--sm" [href]="proofUrl(purchase)" target="_blank" rel="noopener">
+                                    <app-icon name="eye" [size]="15" />
+                                    Ver comprovante
+                                </a>
+                            } @else {
+                                <p class="faint small">Sem comprovante anexado.</p>
+                            }
+                        </div>
+
+                        <div class="actions">
+                            <div class="notes">
+                                <label class="field__label" [attr.for]="'notes-' + purchase.id">Anotações internas</label>
+                                <textarea
+                                    class="textarea"
+                                    rows="2"
+                                    [id]="'notes-' + purchase.id"
+                                    [value]="noteFor(purchase)"
+                                    (input)="updateNote(purchase, $any($event.target).value)"
+                                    placeholder="Ex.: PIX recebido no Nubank, presente comprado."
+                                ></textarea>
+                                <button
+                                    type="button"
+                                    class="btn btn--ghost btn--sm"
+                                    [disabled]="savingNotes() === purchase.id"
+                                    (click)="saveNotes(purchase)"
+                                >
+                                    {{ savingNotes() === purchase.id ? 'Salvando…' : 'Salvar anotação' }}
+                                </button>
+                            </div>
+
+                            <div class="buttons">
+                                @if (canConfirm(purchase)) {
+                                    <button
+                                        type="button"
+                                        class="btn btn--sage"
+                                        [disabled]="busy() === purchase.id"
+                                        (click)="confirm(purchase)"
+                                    >
+                                        <app-icon name="check" [size]="16" />
+                                        Confirmar pagamento
+                                    </button>
+                                }
+
+                                @if (canCancel(purchase)) {
+                                    <button
+                                        type="button"
+                                        class="btn btn--danger"
+                                        [disabled]="busy() === purchase.id"
+                                        (click)="cancel(purchase)"
+                                    >
+                                        <app-icon name="close" [size]="15" />
+                                        {{ armedCancel() === purchase.id ? 'Confirmar cancelamento' : 'Cancelar pedido' }}
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </li>
+        }
+    </ul>
+}

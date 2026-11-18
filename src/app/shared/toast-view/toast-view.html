@@ -1,0 +1,9 @@
+@if (toast.message(); as message) {
+    <div class="toast" [class.is-error]="toast.tone() === 'error'" role="status">
+        <app-icon [name]="toast.tone() === 'error' ? 'info' : 'check'" [size]="18" />
+        <span>{{ message }}</span>
+        <button type="button" class="close" aria-label="Fechar aviso" (click)="toast.clear()">
+            <app-icon name="close" [size]="16" />
+        </button>
+    </div>
+}

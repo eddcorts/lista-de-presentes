@@ -1,0 +1,121 @@
+<dialog
+    #dialogRef
+    class="dialog item-detail"
+    (click)="onBackdropClick($event)"
+    aria-labelledby="item-detail-title"
+>
+    @if (item(); as item) {
+        <button type="button" class="close" (click)="close()" aria-label="Fechar">
+            <app-icon name="close" [size]="16" />
+        </button>
+
+        <div class="detail">
+            <div class="media">
+                <app-media-thumb [url]="item.imageUrl" [alt]="item.name" [label]="item.name" />
+
+                @if (categoryNames().length > 0) {
+                    <div class="tags">
+                        @for (name of categoryNames(); track name) {
+                            <span class="tag">{{ name }}</span>
+                        }
+                    </div>
+                }
+
+                @if (item.soldOut) {
+                    <div class="overlay">
+                        <span>Esgotado</span>
+                    </div>
+                }
+            </div>
+
+            <div class="body">
+                <div class="heading">
+                    <h3 id="item-detail-title">{{ item.name }}</h3>
+                    @if (inCart() > 0) {
+                        <span class="in-cart">
+                            <app-icon name="check" [size]="14" />
+                            {{ inCart() }} no carrinho
+                        </span>
+                    }
+                </div>
+
+                @if (item.description) {
+                    <p class="description">{{ item.description }}</p>
+                }
+
+                @if (item.externalUrl) {
+                    <a
+                        class="external-link"
+                        [href]="item.externalUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <app-icon name="external" [size]="14" />
+                        Ver na loja
+                    </a>
+                }
+
+                <div class="stock">
+                    <div class="label">
+                        <span>{{ stockLabel() }}</span>
+                        @if (!item.soldOut) {
+                            <span>{{ item.remaining }} disponíveis</span>
+                        }
+                    </div>
+                    <div
+                        class="progress"
+                        role="progressbar"
+                        [attr.aria-valuenow]="percent()"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                    >
+                        <span class="progress__bar" [style.width.%]="percent()"></span>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <div class="price">
+                        <strong>{{ item.unitPriceCents | brl }}</strong>
+                        <span>{{ item.priceMode === 'share' ? 'por cota' : 'presente completo' }}</span>
+                    </div>
+
+                    @if (item.soldOut) {
+                        <button type="button" class="btn btn--ghost btn--sm" disabled>Esgotado</button>
+                    } @else if (maxAdd() <= 0) {
+                        <button type="button" class="btn btn--soft btn--sm" disabled>No carrinho</button>
+                    } @else {
+                        <div class="actions">
+                            @if (hasStepper()) {
+                                <div class="stepper compact" aria-label="Quantidade">
+                                    <button
+                                        type="button"
+                                        class="button"
+                                        (click)="decrement()"
+                                        [disabled]="quantity() <= 1"
+                                        aria-label="Diminuir"
+                                    >
+                                        <app-icon name="minus" [size]="15" />
+                                    </button>
+                                    <span class="value">{{ quantity() }}</span>
+                                    <button
+                                        type="button"
+                                        class="button"
+                                        (click)="increment()"
+                                        [disabled]="quantity() >= maxAdd()"
+                                        aria-label="Aumentar"
+                                    >
+                                        <app-icon name="plus" [size]="15" />
+                                    </button>
+                                </div>
+                            }
+                            <button type="button" class="btn btn--primary btn--sm" (click)="add()">
+                                <app-icon name="plus" [size]="15" />
+                                Adicionar
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</dialog>

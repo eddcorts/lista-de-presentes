@@ -1,0 +1,15 @@
+<div class="money" [class.is-disabled]="disabled()">
+    <span class="prefix">R$</span>
+    <input
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        [value]="display()"
+        [placeholder]="placeholder()"
+        [disabled]="disabled()"
+        [attr.aria-label]="label() || 'Valor em reais'"
+        (input)="handleInput($event)"
+        (focus)="selectAll($event)"
+        (blur)="handleBlur()"
+    />
+</div>

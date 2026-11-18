@@ -1,0 +1,108 @@
+<article
+    class="item-card"
+    [class.is-soldout]="item().soldOut"
+    tabindex="0"
+    (click)="openDetails($event)"
+    (keydown.enter)="details.emit()">
+    <div class="media">
+        <app-media-thumb [url]="item().imageUrl" [alt]="item().name" [label]="item().name" />
+
+        @if (categoryNames().length > 0) {
+            <div class="tags">
+                @for (name of categoryNames(); track name) {
+                    <span class="tag">{{ name }}</span>
+                }
+            </div>
+        }
+
+        @if (item().externalUrl) {
+            <a
+                class="external"
+                [href]="item().externalUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                [attr.aria-label]="'Abrir link de ' + item().name">
+                <app-icon name="external" [size]="16" />
+            </a>
+        }
+
+        @if (item().soldOut) {
+            <div class="overlay">
+                <span>Esgotado</span>
+            </div>
+        }
+
+        <ng-container *ngTemplateOutlet="cartSignal" />
+
+    </div>
+
+    <div class="body">
+        <div class="heading">
+            <h3>{{ item().name }}</h3>
+            <ng-container *ngTemplateOutlet="cartSignal" />
+        </div>
+
+        @if (item().description) {
+            <p class="description">{{ item().description }}</p>
+        }
+
+        <div class="stock">
+            <div class="label">
+                <span>{{ stockLabel() }}</span>
+                @if (!item().soldOut) {
+                    <span>{{ item().remaining }} disponíveis</span>
+                }
+            </div>
+            <div class="progress" role="progressbar" [attr.aria-valuenow]="percent()" aria-valuemin="0"
+                aria-valuemax="100">
+                <span class="progress__bar" [style.width.%]="percent()"></span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="price">
+                <strong>{{ item().unitPriceCents | brl }}</strong>
+                <span>{{ item().priceMode === 'share' ? 'por cota' : 'presente completo' }}</span>
+            </div>
+
+            @if (item().soldOut) {
+                <button type="button" class="btn btn--ghost btn--sm" disabled>Esgotado</button>
+            } @else if (maxAdd() <= 0) {
+                <button type="button" class="btn btn--soft btn--sm" disabled>No carrinho</button>
+            } @else {
+                <div class="actions">
+                    @if (hasStepper()) {
+                        <div class="stepper compact" aria-label="Quantidade">
+                            <button type="button" class="button" (click)="decrement()" [disabled]="quantity() <= 1"
+                                aria-label="Diminuir">
+                                <app-icon name="minus" [size]="15" />
+                            </button>
+                            <span class="value">{{ quantity() }}</span>
+                            <button type="button" class="button" (click)="increment()"
+                                [disabled]="quantity() >= maxAdd()" aria-label="Aumentar">
+                                <app-icon name="plus" [size]="15" />
+                            </button>
+                        </div>
+                    }
+                    <button
+                        type="button"
+                        class="btn btn--primary btn--sm"
+                        (click)="add()"
+                        [attr.aria-label]="'Adicionar ' + item().name">
+                        <app-icon name="plus" [size]="15" />
+                        <span class="label">Adicionar</span>
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</article>
+
+<ng-template #cartSignal>
+    @if (inCart() > 0) {
+        <span class="in-cart">
+            <app-icon name="check" [size]="14" />
+            {{ inCart() }} no carrinho
+        </span>
+    }
+</ng-template>

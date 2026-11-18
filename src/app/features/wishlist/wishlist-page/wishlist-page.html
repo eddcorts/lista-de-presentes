@@ -1,0 +1,227 @@
+@if (store.loading() && !data()) {
+    <div class="container landing-skeleton" aria-hidden="true">
+        <div class="skeleton copy"></div>
+    </div>
+} @else if (store.error() && !data()) {
+    <div class="container">
+        <div class="empty-state" role="alert">
+            <app-icon name="info" [size]="28" />
+            <h2>Não foi possível carregar a lista</h2>
+            <p>{{ store.error() }}</p>
+            <button type="button" class="btn btn--primary" (click)="store.retry()">Tentar de novo</button>
+        </div>
+    </div>
+} @else if (data(); as wishlist) {
+    <section class="landing">
+        @if (wishlist.meta.coverImageUrl) {
+            <div class="backdrop" [style.background-image]="backdrop()" aria-hidden="true"></div>
+        }
+        <div class="container">
+            <div class="copy">
+                @if (eventDate()) {
+                    <p class="eyebrow">{{ eventDate() }}</p>
+                }
+                <h1>{{ wishlist.meta.title }}</h1>
+                @if (wishlist.meta.subtitle) {
+                    <p class="subtitle">{{ wishlist.meta.subtitle }}</p>
+                }
+                @if (wishlist.meta.description) {
+                    <p class="description">{{ wishlist.meta.description }}</p>
+                }
+
+                <div class="owner">
+                    <span class="avatar">
+                        <app-media-thumb
+                            [url]="wishlist.meta.ownerImageUrl"
+                            [label]="wishlist.meta.ownerName"
+                            [alt]="wishlist.meta.ownerName" />
+                    </span>
+                    <span class="text">
+                        <strong>{{ wishlist.meta.ownerName }}</strong>
+                        <span>{{ availableCount() }} presentes disponíveis</span>
+                    </span>
+                </div>
+
+                <div class="actions">
+                    <a class="btn btn--primary btn--lg" href="#presentes">
+                        <app-icon name="gift" [size]="18" />
+                        Ver a lista
+                    </a>
+                    @if (cart.count() > 0) {
+                        <a class="btn btn--ghost btn--lg" routerLink="/carrinho">
+                            <app-icon name="cart" [size]="18" />
+                            Carrinho ({{ cart.count() }})
+                        </a>
+                    }
+                </div>
+
+                <span class="stamp" aria-hidden="true">
+                    <app-icon name="sparkles" [size]="16" />
+                    feito à mão
+                </span>
+                <div class="note">
+                    <app-icon name="heart" [size]="18" />
+                    <p>Sua presença é o maior presente. Se quiser contribuir, a lista está aqui.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @if (recentOrder(); as order) {
+        <div class="container">
+            <div class="recent-order">
+                <span class="icon"><app-icon name="clock" [size]="18" /></span>
+                <p>
+                    Você tem um pedido recente de <strong>{{ order.totalCents | brl }}</strong>. Acompanhe o status
+                    por aqui.
+                </p>
+                <a class="btn btn--soft btn--sm" [routerLink]="['/pedido', order.token]">
+                    Ver pedido
+                    <app-icon name="arrow-right" [size]="15" />
+                </a>
+            </div>
+        </div>
+    }
+
+    <section class="steps">
+        <div class="container grid">
+            <div class="step">
+                <span class="num">1</span>
+                <app-icon name="gift" [size]="20" />
+                <div>
+                    <h3>Escolha o presente</h3>
+                    <p>Adicione um item completo, uma cota ou uma contribuição livre.</p>
+                </div>
+            </div>
+            <div class="step">
+                <span class="num">2</span>
+                <app-icon name="qr" [size]="20" />
+                <div>
+                    <h3>Pague com PIX</h3>
+                    <p>Geramos um QR Code e um código copia e cola na hora.</p>
+                </div>
+            </div>
+            <div class="step">
+                <span class="num">3</span>
+                <app-icon name="heart" [size]="20" />
+                <div>
+                    <h3>Avise e aniversariante</h3>
+                    <p>Confirme o pagamento e deixe um recado. Ela aprova manualmente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container listing" id="presentes">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">A lista</p>
+                <h2>Escolha com carinho</h2>
+            </div>
+            <p class="count">
+                {{ filteredItems().length }} de {{ items().length }} presentes
+            </p>
+        </div>
+
+        <div class="filters card card--pad">
+            <div class="categories" role="group" aria-label="Filtrar por categoria">
+                <button
+                    type="button"
+                    class="chip"
+                    [class.chip--active]="selectedCategories().length === 0"
+                    (click)="selectedCategories.set([])">
+                    Todas
+                </button>
+                @for (category of categories(); track category.id) {
+                    <button
+                        type="button"
+                        class="chip"
+                        [class.chip--active]="isCategorySelected(category.id)"
+                        (click)="toggleCategory(category.id)">
+                        {{ category.name }}
+                    </button>
+                }
+            </div>
+
+            <div class="row">
+                <div class="search">
+                    <app-icon name="search" [size]="18" />
+                    <input
+                        type="search"
+                        [value]="search()"
+                        (input)="updateSearch($any($event.target).value)"
+                        placeholder="Buscar por nome ou descrição"
+                        aria-label="Buscar presentes" />
+                </div>
+
+                <label class="control price">
+                    <span>Preço até <strong>{{ priceCapLabel() }}</strong></span>
+                    <input
+                        type="range"
+                        [min]="100"
+                        [max]="priceBounds()"
+                        step="100"
+                        [value]="sliderValue()"
+                        (input)="updatePriceCap($event)"
+                        aria-label="Preço máximo" />
+                </label>
+
+                <label class="checkbox toggle">
+                    <input type="checkbox" [checked]="hideSoldOut()" (change)="toggleSoldOut()" />
+                    <span>Esconder esgotados</span>
+                </label>
+
+                @if (hasFilters()) {
+                    <button type="button" class="btn btn--ghost btn--sm" (click)="clearFilters()">
+                        <app-icon name="close" [size]="14" />
+                        Limpar filtros
+                    </button>
+                }
+
+                <label class="control sort">
+                    <span>Ordenar por</span>
+                    <select class="select" [value]="sort()" (change)="updateSort($any($event.target).value)">
+                        <option value="featured">Destaques</option>
+                        <option value="price-asc">Menor preço</option>
+                        <option value="price-desc">Maior preço</option>
+                        <option value="name">Nome</option>
+                        <option value="category">Categoria</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        @if (filteredItems().length === 0) {
+            <div class="empty-state">
+                <app-icon name="search" [size]="28" />
+                <h3>Nenhum presente encontrado</h3>
+                <p>Tente outro termo ou remova alguns filtros.</p>
+                <button type="button" class="btn btn--primary" (click)="clearFilters()">
+                    Limpar filtros
+                </button>
+            </div>
+        } @else {
+            <div class="grid">
+                @if (donation(); as donationSettings) {
+                    @if (donationSettings.enabled) {
+                        <app-donation-card [settings]="donationSettings" class="donation" />
+                    }
+                }
+
+                @for (item of filteredItems(); track item.id) {
+                    <app-item-card [item]="item" [categories]="categories()" (details)="openDetails(item)" />
+                }
+            </div>
+        }
+
+        <div class="note">
+            <app-icon name="info" [size]="16" />
+            <p>
+                Os presentes são reservados por 24 horas após a geração do PIX. A confirmação do pagamento é
+                feita manualmente pele aniversariante.
+            </p>
+        </div>
+    </section>
+
+    <app-item-detail-dialog [categories]="categories()" />
+}

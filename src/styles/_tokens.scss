@@ -1,0 +1,51 @@
+:root {
+    --color-bg: #f5efe4;
+    --color-bg-deep: #efe6d6;
+    --color-surface: #fffdf9;
+    --color-surface-muted: #faf5ec;
+    --color-ink: #241f19;
+    --color-ink-soft: #645a4e;
+    --color-ink-faint: #8d8274;
+    --color-line: #e3d9c8;
+    --color-line-strong: #d2c4ad;
+
+    --color-accent: #b4552f;
+    --color-accent-dark: #8f3f22;
+    --color-accent-soft: #f6e0d4;
+    --color-sage: #55755f;
+    --color-sage-soft: #e2ece4;
+    --color-gold: #b98a33;
+    --color-gold-soft: #f6ead0;
+    --color-danger: #a03a32;
+    --color-danger-soft: #f8e2df;
+    --color-success: #3c7358;
+    --color-success-soft: #dfeee5;
+
+    --font-sans:
+        ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+        'Noto Sans', sans-serif;
+    --font-display: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+
+    --radius-xs: 0.5rem;
+    --radius-sm: 0.75rem;
+    --radius-md: 1.125rem;
+    --radius-lg: 1.625rem;
+    --radius-pill: 62.4375rem;
+
+    --shadow-xs: 0 1px 2px rgb(52 39 21 / 8%);
+    --shadow-sm: 0 2px 0.625rem rgb(52 39 21 / 8%);
+    --shadow-md: 0 0.75rem 1.75rem -1.125rem rgb(52 39 21 / 45%);
+    --shadow-lg: 0 1.75rem 3.75rem -2rem rgb(52 39 21 / 55%);
+
+    --max-width: 73.75rem;
+    --header-height: 4.5rem;
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4.5rem;
+}

@@ -1,0 +1,141 @@
+<dialog #dialogRef class="dialog item-dialog" aria-labelledby="item-dialog-title">
+    <div class="dialog__header">
+        <div>
+            <p class="eyebrow">{{ editing() ? 'Editar' : 'Novo' }}</p>
+            <h2 id="item-dialog-title">{{ editing() ? 'Editar presente' : 'Adicionar presente' }}</h2>
+        </div>
+        <button type="button" class="icon-btn" (click)="close()" aria-label="Fechar">
+            <app-icon name="close" [size]="18" />
+        </button>
+    </div>
+
+    <form class="dialog__body" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="image-field">
+            <div class="preview">
+                <app-media-thumb [url]="imageUrl()" [label]="form.controls.name.value || 'Presente'" />
+            </div>
+            <div class="actions">
+                <label class="btn btn--ghost btn--sm">
+                    <app-icon name="upload" [size]="15" />
+                    {{ uploading() ? 'Enviando…' : 'Enviar imagem' }}
+                    <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden (change)="uploadImage($event)" />
+                </label>
+                @if (imageUrl()) {
+                    <button type="button" class="btn btn--danger btn--sm" (click)="removeImage()">
+                        Remover
+                    </button>
+                }
+                <p class="field__hint">JPG, PNG, WEBP ou AVIF, até 5 MB. Opcional.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="field form-grid__full">
+                <label class="field__label" for="item-name">Nome do presente</label>
+                <input id="item-name" class="input" type="text" formControlName="name" placeholder="Ex.: Jogo de panelas" />
+                @if (form.controls.name.invalid && form.controls.name.touched) {
+                    <span class="field__error">Informe o nome do presente.</span>
+                }
+            </div>
+
+            <div class="field form-grid__full">
+                <label class="field__label" for="item-description">Descrição (opcional)</label>
+                <textarea
+                    id="item-description"
+                    class="textarea"
+                    formControlName="description"
+                    maxlength="600"
+                    placeholder="Detalhes como cor, tamanho ou modelo."
+                ></textarea>
+            </div>
+
+            <div class="field form-grid__full">
+                <span class="field__label">Como o presente é vendido?</span>
+                <div class="segmented">
+                    <label class="option" [class.is-active]="priceMode() === 'unit'">
+                        <input type="radio" value="unit" formControlName="priceMode" />
+                        <span>
+                            <strong>Preço cheio</strong>
+                            <small>Uma pessoa compra o presente inteiro.</small>
+                        </span>
+                    </label>
+                    <label class="option" [class.is-active]="priceMode() === 'share'">
+                        <input type="radio" value="share" formControlName="priceMode" />
+                        <span>
+                            <strong>Cota</strong>
+                            <small>Várias pessoas dividem o valor.</small>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="item-price">
+                    {{ priceMode() === 'share' ? 'Valor da cota' : 'Preço' }}
+                </label>
+                <app-money-input label="Preço do presente" formControlName="unitPriceCents" />
+                @if (form.controls.unitPriceCents.touched && priceCents() < 1) {
+                    <span class="field__error">Informe um valor maior que zero.</span>
+                }
+            </div>
+
+            <div class="field">
+                <label class="field__label" for="item-needed">
+                    {{ priceMode() === 'share' ? 'Número de cotas' : 'Quantidade necessária' }}
+                </label>
+                <input id="item-needed" class="input" type="number" min="1" max="999" formControlName="neededQuantity" />
+            </div>
+
+            <div class="form-grid__full total-preview">
+                <span>Total do presente</span>
+                <strong>{{ totalPreview() | brl }}</strong>
+            </div>
+
+            <div class="field form-grid__full">
+                <span class="field__label">Categorias</span>
+                @if (categories().length === 0) {
+                    <p class="field__hint">Nenhuma categoria criada ainda. Você pode salvar sem categoria.</p>
+                } @else {
+                    <div class="chips">
+                        @for (category of categories(); track category.id) {
+                            <label class="chip" [class.is-active]="isSelected(category.id)">
+                                <input type="checkbox" [checked]="isSelected(category.id)" (change)="toggleCategory(category.id)" />
+                                @if (category.color) {
+                                    <span class="dot" [style.background]="category.color"></span>
+                                }
+                                {{ category.name }}
+                            </label>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="field form-grid__full">
+                <label class="field__label" for="item-external">Link externo (opcional)</label>
+                <input
+                    id="item-external"
+                    class="input"
+                    type="url"
+                    formControlName="externalUrl"
+                    placeholder="https://loja.com/produto"
+                />
+                <span class="field__hint">Se o presente estiver em outra loja, deixe o link para referência.</span>
+            </div>
+
+            <div class="field form-grid__full">
+                <label class="checkbox">
+                    <input type="checkbox" [checked]="active()" (change)="active.set($any($event.target).checked)" />
+                    <span>Visível na lista pública</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="dialog__footer">
+            <button type="button" class="btn btn--ghost" (click)="close()">Cancelar</button>
+            <button type="submit" class="btn btn--primary" [disabled]="saving()">
+                <app-icon name="check" [size]="16" />
+                {{ saving() ? 'Salvando…' : editing() ? 'Salvar alterações' : 'Adicionar presente' }}
+            </button>
+        </div>
+    </form>
+</dialog>

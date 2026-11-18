@@ -1,0 +1,67 @@
+<div class="login">
+    <div class="art" aria-hidden="true">
+        <span class="ring"></span>
+        <span class="ring second"></span>
+        <p>Um painel simples para cuidar da lista, dos pedidos e dos recados.</p>
+    </div>
+
+    <div class="panel">
+        <a class="brand" routerLink="/">
+            <span class="mark"><app-icon name="gift" [size]="20" /></span>
+            <span>
+                <strong>Lista de presentes</strong>
+                <small>área dos aniversariantes</small>
+            </span>
+        </a>
+
+        <div class="copy">
+            <p class="eyebrow">Acesso restrito</p>
+            <h1>Entre para gerenciar</h1>
+            <p class="muted">Use a senha definida nas variáveis de ambiente do site.</p>
+        </div>
+
+        <form class="form" [formGroup]="form" (ngSubmit)="submit()">
+            <div class="field">
+                <label class="field__label" for="password">Senha do painel</label>
+                <div class="password">
+                    <input
+                        id="password"
+                        class="input"
+                        [type]="showPassword() ? 'text' : 'password'"
+                        formControlName="password"
+                        autocomplete="current-password"
+                        placeholder="••••••••"
+                    />
+                    <button
+                        type="button"
+                        class="reveal"
+                        (click)="togglePassword()"
+                        [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+                    >
+                        <app-icon name="eye" [size]="18" />
+                    </button>
+                </div>
+                @if (form.controls.password.invalid && form.controls.password.touched) {
+                    <span class="field__error">Informe a senha.</span>
+                }
+            </div>
+
+            @if (error()) {
+                <div class="alert alert--danger" role="alert">
+                    <app-icon name="info" [size]="16" />
+                    <span>{{ error() }}</span>
+                </div>
+            }
+
+            <button type="submit" class="btn btn--primary btn--lg btn--block" [disabled]="submitting()">
+                <app-icon name="lock" [size]="17" />
+                {{ submitting() ? 'Entrando…' : 'Entrar no painel' }}
+            </button>
+        </form>
+
+        <a class="back" routerLink="/">
+            <app-icon name="arrow-left" [size]="14" />
+            Voltar para a lista pública
+        </a>
+    </div>
+</div>

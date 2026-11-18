@@ -1,0 +1,53 @@
+<article class="donation-card">
+    <div class="body">
+        <span class="eyebrow">
+            <app-icon name="heart" [size]="14" />
+            Contribuição
+        </span>
+
+        <h3>{{ settings().title }}</h3>
+
+        @if (settings().description) {
+            <p class="description">{{ settings().description }}</p>
+        }
+
+        <div class="chips" role="group" aria-label="Valores sugeridos">
+            @for (amount of settings().suggestedCents; track amount) {
+                <button
+                    type="button"
+                    class="amount"
+                    [class.is-active]="current() === amount"
+                    (click)="select(amount)"
+                >
+                    {{ amount | brl }}
+                </button>
+            }
+        </div>
+
+        <div class="custom">
+            <app-money-input
+                label="Outro valor"
+                [placeholder]="'A partir de ' + minLabel()"
+                (valueChange)="custom.set($event)"
+            />
+            <button type="button" class="btn btn--soft btn--sm" (click)="addCustom()">
+                Usar valor
+            </button>
+        </div>
+
+        <p class="hint">Qualquer valor a partir de {{ minLabel() }}. Sem valor máximo.</p>
+
+        @if (current() > 0) {
+            <div class="current">
+                <span>
+                    No carrinho:
+                    <strong>{{ current() | brl }}</strong>
+                </span>
+                <button type="button" class="remove" (click)="remove()">
+                    <app-icon name="close" [size]="14" />
+                    Remover
+                </button>
+            </div>
+        }
+    </div>
+</article>

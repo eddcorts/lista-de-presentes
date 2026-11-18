@@ -1,0 +1,52 @@
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="site-header">
+    <div class="container inner">
+        <a class="brand" routerLink="/" aria-label="Ir para a lista de presentes">
+            <span class="mark" aria-hidden="true">
+                <app-icon name="gift" [size]="20" />
+            </span>
+            <span class="text">
+                <strong>{{ owner() }}</strong>
+                <small>lista de presentes</small>
+            </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Navegação principal">
+            <a class="link" routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="is-active">
+                Presentes
+            </a>
+            <a class="link cart" routerLink="/carrinho" routerLinkActive="is-active" aria-label="Carrinho">
+                <app-icon name="cart" [size]="18" />
+                <span aria-hidden="true">Carrinho</span>
+                @if (cart.count() > 0) {
+                    <span class="count">{{ cart.count() }}</span>
+                }
+            </a>
+        </nav>
+    </div>
+</header>
+
+<main id="conteudo">
+    <router-outlet />
+</main>
+
+<footer class="site-footer">
+    <div class="container inner">
+        <div class="signature">
+            <app-icon name="heart" [size]="18" />
+            <span>Feito com carinho para {{ owner() }}</span>
+        </div>
+        <div class="meta">
+            @if (eventDate()) {
+                <span>{{ eventDate() }}</span>
+            }
+            <a routerLink="/admin" class="admin">
+                <app-icon name="lock" [size]="14" />
+                Área dos aniversariantes
+            </a>
+        </div>
+    </div>
+</footer>
+
+<app-toast />

@@ -1,0 +1,42 @@
+<header class="admin-topbar">
+    <div class="container inner">
+        <a class="admin-brand" routerLink="/admin">
+            <span class="mark"><app-icon name="gift" [size]="18" /></span>
+            <span class="text">
+                <strong>{{ owner() }}</strong>
+                <small>painel da lista</small>
+            </span>
+        </a>
+
+        <div class="actions">
+            <a class="btn btn--ghost btn--sm" routerLink="/" aria-label="Ver site">
+                <app-icon name="eye" [size]="15" />
+                Ver site
+            </a>
+            <button type="button" class="btn btn--ghost btn--sm" (click)="logout()" aria-label="Sair">
+                <app-icon name="logout" [size]="15" />
+                Sair
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav class="admin-nav" aria-label="Navegação do painel">
+    <div class="container inner">
+        @for (item of nav; track item.path) {
+            <a
+                class="link"
+                [routerLink]="item.path"
+                routerLinkActive="is-active"
+                [routerLinkActiveOptions]="{ exact: !!item.exact }"
+            >
+                <app-icon [name]="item.icon" [size]="17" />
+                {{ item.label }}
+            </a>
+        }
+    </div>
+</nav>
+
+<main class="container admin-main">
+    <router-outlet />
+</main>

@@ -1,0 +1,125 @@
+<header class="page-head">
+    <div>
+        <p class="eyebrow">Organização</p>
+        <h1>Categorias</h1>
+        <p class="muted">Use categorias para agrupar presentes e facilitar os filtros dos convidados.</p>
+    </div>
+</header>
+
+<div class="categories-layout">
+    <section class="card card--pad">
+        <h2 class="panel-title">
+            {{ editingId() ? 'Editar categoria' : 'Nova categoria' }}
+        </h2>
+
+        <form class="category-form" [formGroup]="form" (ngSubmit)="submit()">
+            <div class="field">
+                <label class="field__label" for="category-name">Nome</label>
+                <input
+                    id="category-name"
+                    class="input"
+                    type="text"
+                    formControlName="name"
+                    maxlength="40"
+                    placeholder="Ex.: Cozinha, Livros, Experiências"
+                />
+                @if (form.controls.name.invalid && form.controls.name.touched) {
+                    <span class="field__error">Informe o nome da categoria.</span>
+                }
+            </div>
+
+            <div class="field">
+                <span class="field__label">Cor (opcional)</span>
+                <div class="swatches" role="group" aria-label="Cor da categoria">
+                    @for (swatch of palette; track swatch) {
+                        <button
+                            type="button"
+                            class="swatch"
+                            [class.is-active]="color() === swatch"
+                            [style.background]="swatch"
+                            [attr.aria-label]="'Usar cor ' + swatch"
+                            [attr.aria-pressed]="color() === swatch"
+                            (click)="chooseColor(swatch)"
+                        ></button>
+                    }
+                </div>
+                <span class="field__hint">Clique de novo na cor para removê-la.</span>
+            </div>
+
+            <div class="actions">
+                @if (editingId()) {
+                    <button type="button" class="btn btn--ghost" (click)="cancelEdit()">Cancelar</button>
+                }
+                <button type="submit" class="btn btn--primary" [disabled]="saving()">
+                    <app-icon name="check" [size]="16" />
+                    {{ saving() ? 'Salvando…' : editingId() ? 'Salvar' : 'Criar categoria' }}
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card card--pad categories-list">
+        <h2 class="panel-title">Categorias da lista</h2>
+
+        @if (categories().length === 0) {
+            <div class="empty-state">
+                <app-icon name="tag" [size]="24" />
+                <p>Nenhuma categoria criada. Use o formulário ao lado.</p>
+            </div>
+        } @else {
+            <ul>
+                @for (category of categories(); track category.id) {
+                    <li class="row">
+                        <span
+                            class="dot"
+                            [style.background]="category.color ?? 'var(--color-line-strong)'"
+                        ></span>
+
+                        <div class="info">
+                            <strong>{{ category.name }}</strong>
+                            <span>
+                                {{ count(category) }} presente{{ count(category) === 1 ? '' : 's' }}
+                            </span>
+                        </div>
+
+                        @if (armedDelete() === category.id) {
+                            <div class="confirm">
+                                <span>Excluir?</span>
+                                <button
+                                    type="button"
+                                    class="btn btn--danger btn--sm"
+                                    [disabled]="deleting() === category.id"
+                                    (click)="remove(category)"
+                                >
+                                    {{ deleting() === category.id ? '…' : 'Sim' }}
+                                </button>
+                                <button type="button" class="btn btn--ghost btn--sm" (click)="armedDelete.set(null)">
+                                    Não
+                                </button>
+                            </div>
+                        } @else {
+                            <div class="actions">
+                                <button
+                                    type="button"
+                                    class="icon-btn"
+                                    (click)="startEdit(category)"
+                                    [attr.aria-label]="'Editar ' + category.name"
+                                >
+                                    <app-icon name="edit" [size]="15" />
+                                </button>
+                                <button
+                                    type="button"
+                                    class="icon-btn danger"
+                                    (click)="remove(category)"
+                                    [attr.aria-label]="'Excluir ' + category.name"
+                                >
+                                    <app-icon name="trash" [size]="15" />
+                                </button>
+                            </div>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+</div>

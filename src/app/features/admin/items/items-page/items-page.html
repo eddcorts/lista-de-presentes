@@ -1,0 +1,180 @@
+<header class="page-head">
+    <div>
+        <p class="eyebrow">Catálogo</p>
+        <h1>Presentes</h1>
+        <p class="muted">
+            {{ activeCount() }} visíveis na lista · {{ archivedCount() }} arquivados
+        </p>
+    </div>
+
+    <div class="actions">
+        <button type="button" class="btn btn--primary btn--sm" (click)="openCreate()">
+            <app-icon name="plus" [size]="15" />
+            Novo presente
+        </button>
+    </div>
+</header>
+
+<div class="toolbar card card--pad">
+    <div class="search">
+        <app-icon name="search" [size]="17" />
+        <input
+            type="search"
+            [value]="search()"
+            (input)="search.set($any($event.target).value)"
+            placeholder="Buscar presente"
+            aria-label="Buscar presente"
+        />
+    </div>
+
+    <div class="filters" role="group" aria-label="Filtrar por status">
+        <button
+            type="button"
+            class="chip"
+            [class.chip--active]="statusFilter() === 'all'"
+            (click)="statusFilter.set('all')"
+        >
+            Todos
+        </button>
+        <button
+            type="button"
+            class="chip"
+            [class.chip--active]="statusFilter() === 'active'"
+            (click)="statusFilter.set('active')"
+        >
+            Visíveis
+        </button>
+        <button
+            type="button"
+            class="chip"
+            [class.chip--active]="statusFilter() === 'archived'"
+            (click)="statusFilter.set('archived')"
+        >
+            Arquivados
+        </button>
+    </div>
+</div>
+
+@if (filtered().length === 0) {
+    <div class="empty-state">
+        <app-icon name="box" [size]="28" />
+        <h2>Nenhum presente por aqui</h2>
+        <p>
+            @if (items().length === 0) {
+                Adicione o primeiro presente para começar a lista.
+            } @else {
+                Nenhum presente combina com os filtros escolhidos.
+            }
+        </p>
+        <button type="button" class="btn btn--primary" (click)="openCreate()">
+            <app-icon name="plus" [size]="16" />
+            Adicionar presente
+        </button>
+    </div>
+} @else {
+    <div class="item-table table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Presente</th>
+                    <th scope="col">Preço</th>
+                    <th scope="col">Reservas</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"><span class="visually-hidden">Ações</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (item of filtered(); track item.id) {
+                    <tr [class.is-archived]="item.status === 'archived'">
+                        <td>
+                            <div class="item-cell">
+                                <span class="thumb">
+                                    <app-media-thumb [url]="item.imageUrl" [alt]="item.name" [label]="item.name" />
+                                </span>
+                                <div class="info">
+                                    <strong>{{ item.name }}</strong>
+                                    @if (labels(item)) {
+                                        <span class="tags">{{ labels(item) }}</span>
+                                    }
+                                    @if (item.description) {
+                                        <span class="description">{{ item.description }}</span>
+                                    }
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="price-cell">
+                                <strong>{{ item.unitPriceCents | brl }}</strong>
+                                <span>{{ item.priceMode === 'share' ? 'por cota' : 'unidade' }}</span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="stock-cell">
+                                <div class="label">
+                                    <span>{{ item.claimedQuantity }}/{{ item.neededQuantity }}</span>
+                                    <span>{{ percent(item) }}%</span>
+                                </div>
+                                <div class="progress" role="progressbar" [attr.aria-valuenow]="percent(item)" aria-valuemin="0" aria-valuemax="100">
+                                    <span class="progress__bar" [style.width.%]="percent(item)"></span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            @if (item.status === 'archived') {
+                                <span class="badge">Arquivado</span>
+                            } @else if (item.soldOut) {
+                                <span class="badge badge--danger">Esgotado</span>
+                            } @else {
+                                <span class="badge badge--success">Visível</span>
+                            }
+                        </td>
+
+                        <td>
+                            <div class="row-actions">
+                                <button
+                                    type="button"
+                                    class="icon-btn"
+                                    (click)="openEdit(item)"
+                                    [attr.aria-label]="'Editar ' + item.name"
+                                >
+                                    <app-icon name="edit" [size]="16" />
+                                </button>
+
+                                @if (armedDelete() === item.id) {
+                                    <div class="delete-confirm">
+                                        <span>Excluir?</span>
+                                        <button
+                                            type="button"
+                                            class="btn btn--danger btn--sm"
+                                            [disabled]="deleting() === item.id"
+                                            (click)="remove(item)"
+                                        >
+                                            {{ deleting() === item.id ? 'Excluindo…' : 'Sim' }}
+                                        </button>
+                                        <button type="button" class="btn btn--ghost btn--sm" (click)="cancelArm()">
+                                            Não
+                                        </button>
+                                    </div>
+                                } @else {
+                                    <button
+                                        type="button"
+                                        class="icon-btn danger"
+                                        (click)="remove(item)"
+                                        [attr.aria-label]="'Excluir ' + item.name"
+                                    >
+                                        <app-icon name="trash" [size]="16" />
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<app-item-dialog #itemDialog [categories]="categories()" (saved)="onSaved()" />
