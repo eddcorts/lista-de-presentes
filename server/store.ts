@@ -443,11 +443,24 @@ export class RedisStore implements Store {
         return JSON.parse(value) as T;
     }
 
-    private async hashValues<T>(key: string): Promise<T[]> {
-        const raw = await this.redis.hgetall<Record<string, string>>(key);
+    private async hashEntries(key: string): Promise<Array<[string, string]>> {
+        const raw: unknown = await this.redis.hgetall(key);
         if (!raw) return [];
-        return Object.values(raw)
-            .map((value) => this.decode<T>(value))
+        if (Array.isArray(raw)) {
+            const entries: Array<[string, string]> = [];
+            for (let index = 0; index + 1 < raw.length; index += 2) {
+                entries.push([String(raw[index]), String(raw[index + 1])]);
+            }
+            return entries;
+        }
+        if (typeof raw !== 'object') return [];
+        return Object.entries(raw as Record<string, string>);
+    }
+
+    private async hashValues<T>(key: string): Promise<T[]> {
+        const entries = await this.hashEntries(key);
+        return entries
+            .map(([, value]) => this.decode<T>(value))
             .filter((value): value is T => value !== null);
     }
 
@@ -520,11 +533,10 @@ export class RedisStore implements Store {
 
     async getClaimed(): Promise<Record<string, number>> {
         await this.sweepExpired();
-        const raw = await this.redis.hgetall<Record<string, string>>(this.keys.claims);
+        const entries = await this.hashEntries(this.keys.claims);
         const claims: Record<string, number> = {};
-        if (!raw) return claims;
 
-        for (const [itemId, value] of Object.entries(raw)) {
+        for (const [itemId, value] of entries) {
             const quantity = Number(value);
             if (Number.isFinite(quantity) && quantity > 0) claims[itemId] = quantity;
         }
