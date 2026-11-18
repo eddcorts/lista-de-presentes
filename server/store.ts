@@ -9,8 +9,8 @@ import type {
     PurchaseItemLine,
     PurchaseStatus,
     WishlistMeta,
-} from '../shared/types';
-import { createSeed } from './seed';
+} from '../shared/types.js';
+import { createSeed } from './seed.js';
 
 export interface StoreState {
     meta: WishlistMeta;

@@ -1,6 +1,6 @@
 import { createHash, scryptSync, timingSafeEqual } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
-import type { AppEnv } from './env';
+import type { AppEnv } from './env.js';
 
 export const SESSION_COOKIE = 'niver_admin';
 export const SESSION_MAX_AGE_SECONDS = 12 * 60 * 60;

@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server';
-import { createApp } from './app';
-import { MissingConfigError } from './env';
+import { createApp } from './app.js';
+import { MissingConfigError } from './env.js';
 
 const port = Number(process.env['PORT'] ?? 3000);
 

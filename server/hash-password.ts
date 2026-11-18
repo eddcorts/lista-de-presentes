@@ -1,4 +1,4 @@
-import { hashPassword } from './auth';
+import { hashPassword } from './auth.js';
 
 const password = process.argv[2];
 

@@ -4,7 +4,7 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import QRCode from 'qrcode';
 import type { ZodType } from 'zod';
-import { buildPixPayload, buildTxid } from '../shared/pix';
+import { buildPixPayload, buildTxid } from '../shared/pix.js';
 import type {
     AdminTotals,
     AdminWishlist,
@@ -20,7 +20,7 @@ import type {
     PurchaseItemLine,
     PurchaseLine,
     PurchaseStatus,
-} from '../shared/types';
+} from '../shared/types.js';
 import {
     clearLoginFailures,
     createSessionToken,
@@ -30,8 +30,8 @@ import {
     SESSION_MAX_AGE_SECONDS,
     verifyPassword,
     verifySessionToken,
-} from './auth';
-import { getEnv, MissingConfigError, type AppEnv } from './env';
+} from './auth.js';
+import { getEnv, MissingConfigError, type AppEnv } from './env.js';
 import {
     adminNotesSchema,
     categorySchema,
@@ -41,9 +41,9 @@ import {
     metaSchema,
     purchaseStatusSchema,
     uploadKindSchema,
-} from './schemas';
-import { ACTIVE_STATUSES, effectiveStatus, getStore, isActiveStatus, type Store } from './store';
-import { getUploader, uploadLimitBytes, validateUpload, type UploadKind } from './uploads';
+} from './schemas.js';
+import { ACTIVE_STATUSES, effectiveStatus, getStore, isActiveStatus, type Store } from './store.js';
+import { getUploader, uploadLimitBytes, validateUpload, type UploadKind } from './uploads.js';
 
 export class ApiError extends Error {
     constructor(

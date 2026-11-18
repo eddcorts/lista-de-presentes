@@ -4,7 +4,7 @@ import path from 'node:path';
 import { Readable } from 'node:stream';
 import { randomUUID } from 'node:crypto';
 import { get, put } from '@vercel/blob';
-import type { AppEnv } from './env';
+import type { AppEnv } from './env.js';
 
 export type UploadKind = 'cover' | 'owner' | 'item' | 'proof';
 

@@ -1,4 +1,4 @@
-import type { Category, Item, PurchaseLine, WishlistMeta } from '../shared/types';
+import type { Category, Item, PurchaseLine, WishlistMeta } from '../shared/types.js';
 
 export interface SeedData {
     meta: WishlistMeta;
