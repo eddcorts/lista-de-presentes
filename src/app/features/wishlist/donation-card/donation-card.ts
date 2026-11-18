@@ -23,7 +23,7 @@ export class DonationCard {
 
     protected select(amount: number): void {
         this.cart.setDonation(amount);
-        this.toast.show(`Contribuição de ${brl(amount)} no carrinho.`);
+        this.toast.show(`Contribuição de ${brl(amount)} nos escolhidos.`);
     }
 
     protected addCustom(): void {
@@ -39,6 +39,6 @@ export class DonationCard {
 
     protected remove(): void {
         this.cart.setDonation(0);
-        this.toast.show('Contribuição removida do carrinho.', 'info');
+        this.toast.show('Contribuição removida dos escolhidos.', 'info');
     }
 }

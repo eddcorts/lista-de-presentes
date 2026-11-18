@@ -105,11 +105,11 @@ export function createSeed(): SeedData {
         title: 'Lista de presentes da Ana',
         subtitle: 'Trinta anos, muita comida e boa companhia',
         description:
-            'Escolhi alguns presentes que vão deixar a casa mais gostosa. Fique à vontade para escolher uma cota, dividir um item com alguém ou apenas contribuir com a festa. Obrigada por fazer parte deste ano!',
+            'Escolhi alguns presentes que vão deixar a casa mais gostosa. Fique à vontade para escolher uma cota, dividir um item com alguém ou apenas contribuir com a festa. Obrigado por fazer parte deste ano!',
         ownerName: 'Ana Clara',
         eventDate: '2026-12-05',
         thankYouMessage:
-            'Recebi seu carinho! Assim que o pagamento aparecer no extrato, confirmo aqui na lista. Obrigada de coração.',
+            'Recebi seu carinho! Assim que o pagamento aparecer no extrato, confirmo aqui na lista. Obrigado de coração.',
         pix: {
             key: 'ana.clara@exemplo.com',
             keyType: 'email',

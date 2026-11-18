@@ -41,7 +41,7 @@
     .media {
         position: relative;
         aspect-ratio: 4 / 3;
-        // overflow: hidden;
+        height: 10rem;
         background: var(--color-bg-deep);
 
         app-media-thumb {
@@ -240,6 +240,7 @@
     .item-card {
         .media {
             aspect-ratio: 3 / 2;
+            height: 6.5rem;
 
             .tags .tag {
                 padding: 0.1rem 0.4rem;

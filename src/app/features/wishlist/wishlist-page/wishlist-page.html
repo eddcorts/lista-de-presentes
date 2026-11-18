@@ -48,9 +48,9 @@
                         Ver a lista
                     </a>
                     @if (cart.count() > 0) {
-                        <a class="btn btn--ghost btn--lg" routerLink="/carrinho">
+                        <a class="btn btn--ghost btn--lg" routerLink="/escolhidos">
                             <app-icon name="cart" [size]="18" />
-                            Carrinho ({{ cart.count() }})
+                            Escolhidos ({{ cart.count() }})
                         </a>
                     }
                 </div>
@@ -105,8 +105,8 @@
                 <span class="num">3</span>
                 <app-icon name="heart" [size]="20" />
                 <div>
-                    <h3>Avise e aniversariante</h3>
-                    <p>Confirme o pagamento e deixe um recado. Ela aprova manualmente.</p>
+                    <h3>Avise o aniversariante</h3>
+                    <p>Confirme o pagamento e deixe um recado. Ele aprova manualmente.</p>
                 </div>
             </div>
         </div>
@@ -218,7 +218,7 @@
             <app-icon name="info" [size]="16" />
             <p>
                 Os presentes são reservados por 24 horas após a geração do PIX. A confirmação do pagamento é
-                feita manualmente pele aniversariante.
+                feita manualmente pelo aniversariante.
             </p>
         </div>
     </section>

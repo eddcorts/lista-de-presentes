@@ -34,7 +34,7 @@
                     @if (inCart() > 0) {
                         <span class="in-cart">
                             <app-icon name="check" [size]="14" />
-                            {{ inCart() }} no carrinho
+                            {{ inCart() }} nos escolhidos
                         </span>
                     }
                 </div>
@@ -82,7 +82,7 @@
                     @if (item.soldOut) {
                         <button type="button" class="btn btn--ghost btn--sm" disabled>Esgotado</button>
                     } @else if (maxAdd() <= 0) {
-                        <button type="button" class="btn btn--soft btn--sm" disabled>No carrinho</button>
+                        <button type="button" class="btn btn--soft btn--sm" disabled>Nos escolhidos</button>
                     } @else {
                         <div class="actions">
                             @if (hasStepper()) {

@@ -38,7 +38,7 @@ export class CartStore {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
             } catch {
-                // Armazenamento indisponível (modo privado); o carrinho segue em memória.
+                // Armazenamento indisponível (modo privado); os escolhidos seguem em memória.
             }
         });
     }

@@ -51,10 +51,10 @@ export class OrderPage {
     protected readonly tone = computed(() => statusTone(this.status()));
     protected readonly label = computed(() => statusLabel(this.status()));
     protected readonly ownerName = computed(
-        () => this.store.wishlist()?.meta.ownerName ?? 'e aniversariante',
+        () => this.store.wishlist()?.meta.ownerName ?? 'o aniversariante',
     );
     protected readonly thankYou = computed(
-        () => this.store.wishlist()?.meta.thankYouMessage ?? 'Obrigada pelo carinho!',
+        () => this.store.wishlist()?.meta.thankYouMessage ?? 'Obrigado pelo carinho!',
     );
     protected readonly expiresLabel = computed(() =>
         formatDateTime(this.purchase()?.expiresAt),

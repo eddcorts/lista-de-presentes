@@ -105,7 +105,7 @@
                     <div>
                         <h2 id="confirm-title">Já fez o PIX?</h2>
                         <p class="muted small">
-                            Avise {{ ownerName() }} para ela confirmar o recebimento. Você pode deixar um recado e
+                            Avise {{ ownerName() }} para ele confirmar o recebimento. Você pode deixar um recado e
                             anexar o comprovante.
                         </p>
                     </div>
@@ -184,13 +184,13 @@
                 </div>
                 <p class="eyebrow">{{ isConfirmed() ? 'Pagamento confirmado' : 'Pagamento informado' }}</p>
                 <h2>
-                    {{ isConfirmed() ? 'Presente confirmado!' : 'Obrigada por avisar!' }}
+                    {{ isConfirmed() ? 'Presente confirmado!' : 'Obrigado por avisar!' }}
                 </h2>
                 <p class="message">
                     {{
                         isConfirmed()
                             ? thankYou()
-                            : 'Assim que o PIX for identificado, e aniversariante confirma o presente por aqui. Você pode voltar a esta página para acompanhar.'
+                            : 'Assim que o PIX for identificado, o aniversariante confirma o presente por aqui. Você pode voltar a esta página para acompanhar.'
                     }}
                 </p>
 

@@ -7,7 +7,7 @@
     <div class="container cart-empty">
         <div class="empty-state">
             <span class="icon"><app-icon name="cart" [size]="30" /></span>
-            <h1>Seu carrinho está vazio</h1>
+            <h1>Nenhum presente escolhido</h1>
             <p>Escolha um presente ou uma contribuição para continuar.</p>
             <a class="btn btn--primary" routerLink="/">
                 <app-icon name="gift" [size]="17" />
@@ -20,7 +20,7 @@
         <header class="head">
             <div>
                 <p class="eyebrow">Quase lá</p>
-                <h1>Seu carrinho</h1>
+                <h1>Seus escolhidos</h1>
             </div>
             <a class="btn btn--ghost btn--sm" routerLink="/">
                 <app-icon name="arrow-left" [size]="15" />
@@ -33,7 +33,7 @@
         }
 
         <div class="cart-layout">
-            <section class="cart-lines" aria-label="Itens do carrinho">
+            <section class="cart-lines" aria-label="Presentes escolhidos">
                 @for (entry of cartLines(); track entry.item.id) {
                     <article class="cart-line card">
                         <div class="media">

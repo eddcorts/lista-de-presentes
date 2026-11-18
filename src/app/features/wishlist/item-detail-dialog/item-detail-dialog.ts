@@ -100,7 +100,7 @@ export class ItemDetailDialog {
 
         const quantity = Math.min(this.quantity(), this.maxAdd());
         this.cart.add(current.id, quantity, current.remaining);
-        this.toast.show(`${current.name} adicionado ao carrinho.`);
+        this.toast.show(`${current.name} adicionado aos escolhidos.`);
         this.quantity.set(1);
     }
 }

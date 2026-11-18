@@ -23,9 +23,14 @@ export const routes: Routes = [
                 component: WishlistPage,
             },
             {
-                path: 'carrinho',
-                title: 'Carrinho · Lista de presentes',
+                path: 'escolhidos',
+                title: 'Escolhidos · Lista de presentes',
                 component: CartPage,
+            },
+            {
+                path: 'carrinho',
+                redirectTo: 'escolhidos',
+                pathMatch: 'full',
             },
             {
                 path: 'pedido/:token',

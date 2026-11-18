@@ -111,12 +111,12 @@ export class CartPage {
 
     protected remove(item: PublicItem): void {
         this.cart.remove(item.id);
-        this.toast.show(`${item.name} removido do carrinho.`, 'info');
+        this.toast.show(`${item.name} removido dos escolhidos.`, 'info');
     }
 
     protected removeDonation(): void {
         this.cart.setDonation(0);
-        this.toast.show('Contribuição removida do carrinho.', 'info');
+        this.toast.show('Contribuição removida dos escolhidos.', 'info');
     }
 
     protected fieldInvalid(name: 'buyerName' | 'buyerEmail'): boolean {
@@ -129,7 +129,7 @@ export class CartPage {
         this.errorMessage.set(null);
 
         if (this.isEmpty()) {
-            this.toast.show('Seu carrinho está vazio.', 'error');
+            this.toast.show('Escolha ao menos um presente.', 'error');
             return;
         }
 

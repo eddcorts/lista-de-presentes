@@ -69,7 +69,7 @@ export class ItemCard {
 
         const quantity = Math.min(this.quantity(), this.maxAdd());
         this.cart.add(item.id, quantity, item.remaining);
-        this.toast.show(`${item.name} adicionado ao carrinho.`);
+        this.toast.show(`${item.name} adicionado aos escolhidos.`);
         this.quantity.set(1);
     }
 }

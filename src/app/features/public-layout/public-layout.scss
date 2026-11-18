@@ -78,11 +78,9 @@
             color: var(--color-ink);
         }
 
-        &.is-active {
-            background: var(--color-surface);
-            color: var(--color-ink);
-            box-shadow: var(--shadow-xs);
-        }
+        background: var(--color-surface);
+        color: var(--color-ink);
+        box-shadow: var(--shadow-xs);
     }
 
     .cart {
@@ -154,10 +152,6 @@
 
     .site-nav {
         .link {
-            span:not(.count) {
-                display: none;
-            }
-
             padding: 0.55rem 0.7rem;
         }
 

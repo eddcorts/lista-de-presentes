@@ -13,12 +13,9 @@
         </a>
 
         <nav class="site-nav" aria-label="Navegação principal">
-            <a class="link" routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="is-active">
-                Presentes
-            </a>
-            <a class="link cart" routerLink="/carrinho" routerLinkActive="is-active" aria-label="Carrinho">
+            <a class="link cart" routerLink="/escolhidos" routerLinkActive="is-active" aria-label="Escolhidos">
                 <app-icon name="cart" [size]="18" />
-                <span aria-hidden="true">Carrinho</span>
+                <span aria-hidden="true">Escolhidos</span>
                 @if (cart.count() > 0) {
                     <span class="count">{{ cart.count() }}</span>
                 }
@@ -43,7 +40,7 @@
             }
             <a routerLink="/admin" class="admin">
                 <app-icon name="lock" [size]="14" />
-                Área dos aniversariantes
+                Área do aniversariante
             </a>
         </div>
     </div>
